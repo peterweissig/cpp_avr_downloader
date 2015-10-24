@@ -5,7 +5,7 @@
 # checkout.sh                                                                 #
 # ===========                                                                 #
 #                                                                             #
-# Version: 1.0.0                                                              #
+# Version: 1.1.0                                                              #
 # Date   : 24.10.15                                                           #
 # Author : Peter Weissig                                                      #
 #                                                                             #
@@ -14,9 +14,10 @@
 ###############################################################################
 
 NAME_GIT_THIS="avr_downloader"
-NAME_GIT_MAIN="main"
 NAME_GIT_SUBS="basic comport file"
 
+###############################################################################
+NAME_GIT_MAIN="main"
 URL_GIT_BASE="https://github.com/peterweissig/"
 URL_GIT_THIS="${URL_GIT_BASE}cpp_${NAME_GIT_THIS}.git"
 URL_GIT_MAIN="${URL_GIT_BASE}cpp_${NAME_GIT_MAIN}.git"
@@ -25,14 +26,15 @@ PATH_SOURCE="src/"
 NAME_CHECKOUT_SCRIPT="checkout.sh"
 NAME_ARGUMENT_SCRIPT="dependency"
 
-SRC_DIR="$(pwd)"
-
+###############################################################################
 if [ "$#" -eq 0 ]; then
     echo "Running this script without parameters."
     echo "Therefore the project"
     echo "  \"${NAME_GIT_THIS}\""
     echo "will be checked out completely."
     echo ""
+
+    SRC_DIR_MAIN="$(pwd)"
 
     echo ""
     echo "### checking out toplevel structure"
@@ -65,9 +67,10 @@ if [ "$#" -eq 0 ]; then
 
     echo ""
     echo "### deleting this script"
-    cd "${SRC_DIR}"
+    cd "${SRC_DIR_MAIN}"
     rm "${NAME_CHECKOUT_SCRIPT}"
 
+###############################################################################
 elif [ "$1" == "${NAME_ARGUMENT_SCRIPT}" ]; then
     echo "Running this script with argument \"$1\"."
     echo "Therefore all dependend sources of"
@@ -75,8 +78,10 @@ elif [ "$1" == "${NAME_ARGUMENT_SCRIPT}" ]; then
     echo "will be checked out recursivly."
     echo ""
 
+    SRC_DIR_DEPENDENCY="$(pwd)"
+
     for dependency in $NAME_GIT_SUBS ; do
-        cd "${SRC_DIR}"
+        cd "${SRC_DIR_DEPENDENCY}"
 
         if [ ! -d "../${dependency}" ]; then
             echo ""
@@ -94,6 +99,7 @@ elif [ "$1" == "${NAME_ARGUMENT_SCRIPT}" ]; then
         fi
     done
 
+###############################################################################
 else
     echo "Running this script with argument \"$1\"."
     echo "Error - expecting no argument or \"${NAME_ARGUMENT_SCRIPT}\"."

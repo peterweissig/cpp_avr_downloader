@@ -1,6 +1,6 @@
 /******************************************************************************
-* examples/bootloader.c                                                       *
-* =====================                                                       *
+* bootloader.c                                                                *
+* ============                                                                *
 *                                                                             *
 * Version: 1.0.2                                                              *
 * Date   : 23.10.15                                                           *
@@ -85,50 +85,3 @@ uint8_t bootloader_error(void) {
 
     return 0xFF;
 }
-
-
-/******************************************************************************
-*                                                                             *
-* How to compile this example                                                 *
-* ===========================                                                 *
-*                                                                             *
-* required files                                                              *
-*   + bootloader.c          (source code, this file)                          *
-*   + bootloader_header.ini (headerfile as '.ini')                            *
-*   + Makefile              (needed for compiling, linking and downloading)   *
-*                                                                             *
-* 1. adjust Makefile                              (only needed once)          *
-*   + set "MCU" to the controller type              (e.g. atmega64)           *
-*   + set "PATH_LIB" to the library                 (e.g. ~/avr/system)       *
-*   + set "BOOTSTART" to boot adress                (e.g. 0xE000)             *
-*                                                                             *
-* 2. compile library and create headerfile        (only needed once)          *
-*   + open a console                                (e.g. strg+alt+t)         *
-*   + change to the directory of the files          (e.g. cd ~/avr/test/)     *
-*   + run make with "ini" as parameter              (e.g. make ini)           *
-*     ==> check output for errors                                             *
-*                                                                             *
-* 3. compile main file and link everything        (needed for all changes)    *
-*   + open a console                                (e.g. strg+alt+t)         *
-*   + change to the directory of the files          (e.g. cd ~/avr/test/)     *
-*   + run make with "all" as parameter              (e.g. make all)           *
-*     ==> check output for errors                                             *
-*                                                                             *
-* How to download this example                                                *
-* ============================                                                *
-*                                                                             *
-* required files                                                              *
-*   + out.hex          (machine code, created in the steps above)             *
-*   + Makefile         (needed for compiling, linking and downloading)        *
-*                                                                             *
-* 1. adjust Makefile                              (only needed once)          *
-*   + set "COMPORT_AVRDUDE" to the serial device    (e.g. /dev/ttyACM0)       *
-*   + set "BAUDRATE_AVRDUDE" to the speed           (e.g. 4µs)                *
-*                                                                             *
-* 2. download result                              (needed for all changes)    *
-*   + open a console                                (e.g. strg+alt+t)         *
-*   + change to the directory of the files          (e.g. cd ~/avr/test/)     *
-*   + run make with "avrdude" as parameter          (e.g. make avrdude)       *
-*     ==> check output for errors                                             *
-*                                                                             *
-******************************************************************************/

@@ -11,23 +11,29 @@
 #   https://github.com/peterweissig/cpp_main/                                 #
 ###############################################################################
 
-.PHONY : all clean eclipse update status update_init status_init
+NAME_GIT_THIS=main
 
-PATH_BUILD="build/"
-PATH_SOURCE="src/"
+URL_GIT_BASE=https://github.com/peterweissig/
+URL_GIT_THIS=$(URL_GIT_BASE)cpp_$(NAME_GIT_THIS).git
+
+PATH_BUILD=build/
+PATH_SOURCE=src/
+
 
 URL_GIT="https://github.com/peterweissig/cpp_main.git"
 NAME_GIT="main"
 
-SUB_MAKEFILES = $(wildcard src/*/Makefile)
+SUB_MAKEFILES = $(wildcard $(PATH_SOURCE)*/Makefile)
 .PHONY : $(SUB_MAKEFILES)
+
+.PHONY : all clean eclipse update status push update_init status_init
 
 all:
 	mkdir -p $(PATH_BUILD)
 
 	@echo ""
 	@echo "### starting cmake ###"
-	cd $(PATH_BUILD) && cmake ../src
+	cd $(PATH_BUILD) && cmake ../$(PATH_SOURCE)
 
 	@echo ""
 	@echo "### starting build process ###"
@@ -46,7 +52,8 @@ eclipse:
 
 	@echo ""
 	@echo "### starting cmake (eclipse) ###"
-	cd $(PATH_BUILD) && cmake ../src -G"Eclipse CDT4 - Unix Makefiles"
+	cd $(PATH_BUILD) && cmake ../$(PATH_SOURCE) \
+	  -G"Eclipse CDT4 - Unix Makefiles"
 
 	@echo ""
 	@echo "### finished :-) ###"
@@ -55,15 +62,20 @@ update: update_init $(SUB_MAKEFILES)
 
 status: status_init $(SUB_MAKEFILES)
 
+push:
+	@echo ""
+	@echo "### pushing of $(NAME_GIT_THIS) ###"
+	git push "$(URL_GIT_THIS)"
+
 update_init:
 	@echo ""
-	@echo "### update $(NAME_GIT) ###"
-	git pull "$(URL_GIT)"
+	@echo "### update $(NAME_GIT_THIS) ###"
+	git pull "$(URL_GIT_THIS)"
 	$(eval MAKEFILE_COMMAND=update)
 
 status_init:
 	@echo ""
-	@echo "### status of $(NAME_GIT) ###"
+	@echo "### status of $(NAME_GIT_THIS) ###"
 	@git status --untracked-files
 	$(eval MAKEFILE_COMMAND=status)
 

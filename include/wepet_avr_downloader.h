@@ -3,8 +3,8 @@
 * wepet_avr_downloader.h                                                      *
 * ======================                                                      *
 *                                                                             *
-* Version: 2.0.0                                                              *
-* Date   : 24.10.15                                                           *
+* Version: 2.0.1                                                              *
+* Date   : 25.10.15                                                           *
 * Author : Peter Weissig                                                      *
 *                                                                             *
 * For help or bug report please visit:                                        *

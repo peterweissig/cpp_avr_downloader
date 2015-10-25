@@ -3,13 +3,16 @@
 * wepet_avr_downloader.cpp                                                    *
 * ========================                                                    *
 *                                                                             *
-* Version: 2.0.0                                                              *
-* Date   : 24.10.15                                                           *
+* Version: <see below>                                                        *
+* Date   : <see below>                                                        *
 * Author : Peter Weissig                                                      *
 *                                                                             *
 * For help or bug report please visit:                                        *
 *   https://github.com/peterweissig/                                          *
 ******************************************************************************/
+
+#define AVR_DOWNLOADER_VERSION "2.0.1"
+#define AVR_DOWNLOADER_DATE "25.10.2015"
 
 // local headers
 #include "wepet_avr_downloader.h"
@@ -380,7 +383,7 @@ bool cAvrDownloader::LoadDevice() {
         return true;
     }
 
-    cAvrdudeFile file("avrdude.conf");
+    cAvrdudeFile file(path_ + "avrdude.conf");
 
     if (file.HasError()) {
         OutputError(file.ReturnLastError());
@@ -1227,10 +1230,11 @@ void cAvrDownloader::OutputHeader(void) {
     std::cout << "AVR-Downloader"                               << std::endl;
     std::cout << "=============="                               << std::endl;
     std::cout                                                   << std::endl;
-    std::cout << "Version: 2.0.0"                               << std::endl;
-    std::cout << "Date   : 24.10.2015"                          << std::endl;
+    std::cout << "Version: " << AVR_DOWNLOADER_VERSION          << std::endl;
+    std::cout << "Date   : " << AVR_DOWNLOADER_DATE             << std::endl;
     std::cout << "Author : Peter Weissig"                       << std::endl;
-    std::cout << "Website: https://github.com/peterweissig/"    << std::endl;
+    std::cout << "Website: " <<
+      "https://github.com/peterweissig/cpp_avr_downloader"      << std::endl;
     std::cout                                                   << std::endl;
 }
 

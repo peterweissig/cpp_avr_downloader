@@ -11,7 +11,7 @@
 *   https://github.com/peterweissig/                                          *
 ******************************************************************************/
 
-#define AVR_DOWNLOADER_VERSION "2.0.1"
+#define AVR_DOWNLOADER_VERSION "2.0.2"
 #define AVR_DOWNLOADER_DATE "25.10.2015"
 
 // local headers
@@ -647,8 +647,8 @@ void cAvrDownloader::DownloadWarning() {
 
     switch (programmer_) {
         case ptFlash1:
-            OutputLine("warning: this flash version was not tested yet");
-            OutputLine("");
+            //OutputLine("flash version tested - October 2015", vbDebug);
+            //OutputLine("", vbDebug);
             break;
 
         case ptFlash2:
@@ -662,8 +662,8 @@ void cAvrDownloader::DownloadWarning() {
             break;
 
         case ptFlash4:
-            OutputLine("flash version tested - October 2015", vbDebug);
-            OutputLine("", vbDebug);
+            //OutputLine("flash version tested - October 2015", vbDebug);
+            //OutputLine("", vbDebug);
             break;
     }
 }
@@ -715,12 +715,12 @@ bool cAvrDownloader::DownloadCheck() {
     } else {
         if (programmer_ < ptFlash4) {
             if (data[0] != 'i') {
-            	DownloadError(error);
+                DownloadError(error);
                 return false;
             }
         } else {
             if (data[0] != 'I') {
-            	DownloadError(error);
+                DownloadError(error);
                 return false;
             }
         }
@@ -733,7 +733,7 @@ bool cAvrDownloader::DownloadCheck() {
             bootstart|= ((int) data[8] & 0xFF) << 16;
         }
         if (data[receive_count - 1] != '\r') {
-        	DownloadError(error);
+            DownloadError(error);
             return false;
         }
     }
@@ -743,7 +743,7 @@ bool cAvrDownloader::DownloadCheck() {
           " (expected " + ConvertToHex(device_signature_) + ")";
 
         if (flag_verify_signature_) {
-        	DownloadError(msg);
+            DownloadError(msg);
             return false;
         } else {
             OutputLine(msg, vbInfo);
@@ -754,7 +754,7 @@ bool cAvrDownloader::DownloadCheck() {
     }
 
     if (pagesize != device_page_size_) {
-    	DownloadError("wrong page size " + wepet::IntToStr(pagesize) +
+        DownloadError("wrong page size " + wepet::IntToStr(pagesize) +
           " (expected " + wepet::IntToStr(device_page_size_) + ")");
         return false;
     } else {
@@ -943,11 +943,11 @@ bool cAvrDownloader::DownloadPage(const int page) {
     std::string send;
     std::string receive;
     if (programmer_ == ptFlash1) {
-        send = "D";
+        send = "D" + data;
         receive+= (char) crc;
     } else {
         switch (programmer_) {
-            case ptFlash2: send = "D"    ; receive+= "d"; break;
+            case ptFlash2: send = "D"    ; receive = "d"; break;
             case ptFlash3: send = "Ddx"  ; receive = "d"; break;
             case ptFlash4: send = "write"; receive = "W"; break;
 
@@ -1067,7 +1067,7 @@ bool cAvrDownloader::DownloadVerifyPage(const int page) {
     std::string data = comport_.BufferGet();
     if (data.size() < receive_count) { DownloadError(error); return false; }
     if ((data[0] != 'R') && (data[flash_.PageSizeGet() + 2] != '\r')) {
-    	DownloadError(error);
+        DownloadError(error);
         return false;
     }
 
@@ -1076,7 +1076,7 @@ bool cAvrDownloader::DownloadVerifyPage(const int page) {
         char lo = (char) flash_.DataLoGet(page, word);
         char hi = (char) flash_.DataHiGet(page, word);
         if ((data[word * 2 + 1] != lo) || (data[word * 2 + 2] != hi)) {
-        	DownloadError("failed to verify word " + wepet::IntToStr(word) +
+            DownloadError("failed to verify word " + wepet::IntToStr(word) +
               " on page " + wepet::IntToStr(page));
             return false;
         }
@@ -1085,7 +1085,7 @@ bool cAvrDownloader::DownloadVerifyPage(const int page) {
     crc&= 0xFF;
 
     if (data[flash_.PageSizeGet() + 1] != (char) crc) {
-    	DownloadError("wrong checksum");
+        DownloadError("wrong checksum");
         return false;
     }
 

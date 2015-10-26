@@ -11,8 +11,8 @@
 *   https://github.com/peterweissig/                                          *
 ******************************************************************************/
 
-#define AVR_DOWNLOADER_VERSION "2.0.2"
-#define AVR_DOWNLOADER_DATE "25.10.2015"
+#define AVR_DOWNLOADER_VERSION "2.0.3"
+#define AVR_DOWNLOADER_DATE "26.10.2015"
 
 // local headers
 #include "wepet_avr_downloader.h"
@@ -93,7 +93,7 @@ cAvrDownloader::cAvrDownloader(int argc, char **argv) {
 
     if (! SaveFiles()             ) { return; }
 
-    OutputLine("done");
+    OutputLine("done", vbSilent);
 }
 
 //**************************[~cAvrDownloader]**********************************
@@ -350,7 +350,7 @@ bool cAvrDownloader::ParseOptions(int argc, char **argv) {
 //**************************[CheckOptions]*************************************
 bool cAvrDownloader::CheckOptions() {
 
-    if (verbosity_ >= vbInfo) {
+    if (verbosity_ >= vbQuiet) {
         OutputHeader();
     }
 
@@ -652,8 +652,8 @@ void cAvrDownloader::DownloadWarning() {
             break;
 
         case ptFlash2:
-            OutputLine("warning: this flash version was not tested yet");
-            OutputLine("");
+            //OutputLine("flash version tested - October 2015", vbDebug);
+            //OutputLine("", vbDebug);
             break;
 
         case ptFlash3:
@@ -743,7 +743,7 @@ bool cAvrDownloader::DownloadCheck() {
           " (expected " + ConvertToHex(device_signature_) + ")";
 
         if (flag_verify_signature_) {
-            DownloadError(msg);
+            OutputError(msg);
             return false;
         } else {
             OutputLine(msg, vbInfo);
@@ -754,7 +754,7 @@ bool cAvrDownloader::DownloadCheck() {
     }
 
     if (pagesize != device_page_size_) {
-        DownloadError("wrong page size " + wepet::IntToStr(pagesize) +
+        OutputError("wrong page size " + wepet::IntToStr(pagesize) +
           " (expected " + wepet::IntToStr(device_page_size_) + ")");
         return false;
     } else {
@@ -812,17 +812,20 @@ bool cAvrDownloader::DownloadPages() {
     for (int page = flash_.PageMinGet(); page <= flash_.PageMaxGet(); page++) {
         if ((flash_.PageStateGet(page) & fsGetChanged) == 0x00) { continue; }
 
-        if (! DownloadSetAddress(page * flash_.PageSizeGet())) {
+        if (error_count >= 50) {
+            OutputError(wepet::IntToStr(error_count) +
+              ". error - aborting download");
             return false;
+        }
+
+        if (! DownloadSetAddress(page * flash_.PageSizeGet())) {
+            error_count++;
+            page--;
+            continue;
         }
 
         if (! DownloadPage(page)) {
             error_count++;
-            if (error_count > 10) {
-                OutputError(wepet::IntToStr(error_count) +
-                  ". error - aborting download");
-                return false;
-            }
             page--;
             continue;
         }
@@ -843,12 +846,7 @@ bool cAvrDownloader::DownloadPages() {
 bool cAvrDownloader::DownloadSetAddress(const int address) {
 
     // check input
-    if (address < 0) {
-        OutputError("address (" + wepet::IntToStr(address) + ") < 0");
-        return false;
-    }
-    if (address >= flash_.FlashSizeGet()) {
-        OutputError("address (" + wepet::IntToStr(address) + ") >= maximum");
+    if ((address < 0) || (address >= flash_.FlashSizeGet())) {
         return false;
     }
 
@@ -897,12 +895,7 @@ bool cAvrDownloader::DownloadSetAddress(const int address) {
 bool cAvrDownloader::DownloadPage(const int page) {
 
     // check input
-    if (page < 0) {
-        OutputError("page (" + wepet::IntToStr(page) + ") < 0");
-        return false;
-    }
-    if (page >= flash_.FlashSizeGet()) {
-        OutputError("page (" + wepet::IntToStr(page) + ") >= maximum");
+    if ((page < 0) || (page >= flash_.FlashSizeGet())) {
         return false;
     }
 
@@ -1001,25 +994,35 @@ bool cAvrDownloader::DownloadVerify() {
 
     int verified_pages = 0;
     int error_count = 0;
+    int error_count_same_page = 0;
 
     for (int page = flash_.PageMinGet(); page <= flash_.PageMaxGet(); page++) {
         if ((flash_.PageStateGet(page) & fsGetChanged) == 0x00) { continue; }
 
-        if (! DownloadSetAddress(page * flash_.PageSizeGet())) {
+        if (error_count >= 50) {
+            OutputError(wepet::IntToStr(error_count) +
+              ". error - aborting verification");
+            return false;
+        }
+        if (error_count_same_page >= 5) {
+            OutputError(wepet::IntToStr(error_count) +
+              ". error at same page - aborting verification");
             return false;
         }
 
-        if (! DownloadVerifyPage(page)) {
+        if (! DownloadSetAddress(page * flash_.PageSizeGet())) {
             error_count++;
-            if (error_count > 4) {
-                OutputError(wepet::IntToStr(error_count) +
-                  ". error - aborting verification");
-                return false;
-            }
             page--;
             continue;
         }
 
+        if (! DownloadVerifyPage(page)) {
+            error_count++;
+            page--;
+            continue;
+        }
+
+        error_count_same_page = 0;
         verified_pages++;
         if (verbosity_ < vbDebug) {
             progressbar_.Update(verified_pages);
@@ -1036,12 +1039,7 @@ bool cAvrDownloader::DownloadVerify() {
 bool cAvrDownloader::DownloadVerifyPage(const int page) {
 
     // check input
-    if (page < 0) {
-        OutputError("page (" + wepet::IntToStr(page) + ") < 0");
-        return false;
-    }
-    if (page >= flash_.FlashSizeGet()) {
-        OutputError("page (" + wepet::IntToStr(page) + ") >= maximum");
+    if ((page < 0) || (page >= flash_.FlashSizeGet())) {
         return false;
     }
 
@@ -1121,10 +1119,7 @@ bool cAvrDownloader::DownloadExit() {
 //**************************[DownloadError]************************************
 void cAvrDownloader::DownloadError(std::string error) {
 
-    OutputError(error);
-
-    comport_.HWBufferFlush(true, true);
-    comport_.BufferClear();
+    OutputLine(error);
 
     for (int i = 0; i < 5; i++) {
         comport_.HWBufferFlush(true, true);
@@ -1216,7 +1211,7 @@ bool cAvrDownloader::DownloadCommand(const std::string transmit,
     }
 
     if (error != "") {
-        OutputError(error);
+        DownloadError(error);
     } else {
         OutputLine("", vbVerbose);
     }
@@ -1442,25 +1437,26 @@ void cAvrDownloader::OutputLine(const std::string line,
 }
 
 //**************************[OutputParseError]*********************************
-void cAvrDownloader::OutputError(std::string error) {
+void cAvrDownloader::OutputError(const std::string error) {
 
     if (verbosity_ > vbSilent) {
-      std::cout << std::endl << "Error - " << error <<  std::endl;
+        progressbar_.Skip();
+        std::cout << std::endl << "Error - " << error <<  std::endl;
     }
 }
 
 //**************************[OutputParseError]*********************************
-void cAvrDownloader::OutputParseError(std::string option) {
+void cAvrDownloader::OutputParseError(const std::string option) {
 
     if (verbosity_ >= vbInfo) {
-      OutputHeader();
+        OutputHeader();
     }
 
     OutputError("parsing " + option);
 }
 
 //**************************[ConvertToHex]*************************************
-std::string cAvrDownloader::ConvertToHex(std::string data) {
+std::string cAvrDownloader::ConvertToHex(const std::string data) {
 
     std::string result;
     for (int i = 0; i < data.size(); i++) {

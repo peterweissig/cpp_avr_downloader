@@ -3,8 +3,8 @@
 * wepet_avr_downloader.h                                                      *
 * ======================                                                      *
 *                                                                             *
-* Version: 2.0.2                                                              *
-* Date   : 25.10.15                                                           *
+* Version: 2.0.3                                                              *
+* Date   : 26.10.15                                                           *
 * Author : Peter Weissig                                                      *
 *                                                                             *
 * For help or bug report please visit:                                        *
@@ -97,7 +97,7 @@ class cAvrDownloader {
     bool DownloadVerify(void);
     bool DownloadVerifyPage(const int page);
     bool DownloadExit(void);
-    void DownloadError(std::string error);
+    void DownloadError(const std::string error);
 
     bool DownloadCommand(const std::string transmit, const char receive_char,
       const std::string error = "", const int retry = 3);
@@ -116,10 +116,10 @@ class cAvrDownloader {
 
     void OutputLine(const std::string line,
       const eVerbosity verbosity = vbInfo);
-    void OutputError(std::string error);
-    void OutputParseError(std::string option);
+    void OutputError(const std::string error);
+    void OutputParseError(const std::string option);
 
-    std::string ConvertToHex(std::string data);
+    std::string ConvertToHex(const std::string data);
 
     std::string path_;
 

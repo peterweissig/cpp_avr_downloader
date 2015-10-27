@@ -1,0 +1,6 @@
+tmp/
+lib/
+data/
+
+out.hex
+*.h

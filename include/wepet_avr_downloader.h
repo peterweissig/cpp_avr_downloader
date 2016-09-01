@@ -3,8 +3,8 @@
 * wepet_avr_downloader.h                                                      *
 * ======================                                                      *
 *                                                                             *
-* Version: 2.0.3                                                              *
-* Date   : 26.10.15                                                           *
+* Version: 2.0.4                                                              *
+* Date   : 01.09.16                                                           *
 * Author : Peter Weissig                                                      *
 *                                                                             *
 * For help or bug report please visit:                                        *
@@ -144,6 +144,7 @@ class cAvrDownloader {
     std::string comport_name_;
     int baudrate_;
     cComPortBuffer comport_;
+    int command_timeout_;
 
 
     eProgrammerType programmer_;

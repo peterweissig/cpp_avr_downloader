@@ -11,8 +11,8 @@
 *   https://github.com/peterweissig/                                          *
 ******************************************************************************/
 
-#define AVR_DOWNLOADER_VERSION "2.0.3"
-#define AVR_DOWNLOADER_DATE "26.10.2015"
+#define AVR_DOWNLOADER_VERSION "2.0.4"
+#define AVR_DOWNLOADER_DATE "01.09.2016"
 
 // local headers
 #include "wepet_avr_downloader.h"
@@ -70,6 +70,7 @@ cAvrDownloader::cAvrDownloader(int argc, char **argv) {
     comport_name_ = "/dev/ttyS0";
     baudrate_     = 57600;
     //comport_ ...
+    command_timeout_ = 200;
 
     programmer_    = ptAuto;
     //programmer_id_ = "";
@@ -306,6 +307,23 @@ bool cAvrDownloader::ParseOptions(int argc, char **argv) {
             continue;
         }
 
+        if (arg == "-T") {
+            a++;
+            if (a >= argc) {
+                OutputParseError(arg);
+                return false;
+            }
+
+            int time;
+            if (! wepet::StrToInt(argv[a], time)) {
+                OutputParseError(arg + argv[a]);
+                return false;
+            }
+
+            command_timeout_ = time;
+            continue;
+        }
+
         if (arg ==   "-q") {
             if (verbosity_ > vbMin) {
                 verbosity_ = (eVerbosity) (verbosity_ - 1);
@@ -449,7 +467,7 @@ bool cAvrDownloader::LoadFiles() {
 //**************************[OpenComport]*****************************************
 bool cAvrDownloader::OpenComport() {
 
-    comport_.BufferTimeSet(200);
+    comport_.BufferTimeSet(command_timeout_);
     if (! comport_.SettingBaudRateSet(baudrate_)) {
         OutputError("can not set baudrate of comport (" +
           wepet::IntToStr(baudrate_) + " baud)");
@@ -1300,6 +1318,9 @@ void cAvrDownloader::OutputHelp(void) {
     std::cout << "  -P <port>        " <<
       "Specify connection port [default /dev/ttyS0]"            << std::endl;
 
+    std::cout << "  -T <timeout>     " <<
+      "Specify max. time commands [default 200ms]"              << std::endl;
+
     std::cout                                                   << std::endl;
 
     std::cout << "  -F               " <<
@@ -1349,7 +1370,7 @@ void cAvrDownloader::OutputOptions(void) {
     }
     std::cout << "  Port           : " << comport_name_         << std::endl;
     std::cout << "  Baudrate       : " << baudrate_             << std::endl;
-
+    std::cout << "  TimeOut        : " << command_timeout_      << std::endl;
 
     std::cout << "  Signature check: " <<
       wepet::BoolToStr(flag_verify_signature_) << std::endl;

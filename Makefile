@@ -3,8 +3,8 @@
 # Makefile                                                                    #
 # ========                                                                    #
 #                                                                             #
-# Version: 1.1.0                                                              #
-# Date   : 24.10.15                                                           #
+# Version: 1.1.2                                                              #
+# Date   : 01.09.16                                                           #
 # Author : Peter Weissig                                                      #
 #                                                                             #
 # For help or bug report please visit:                                        #
@@ -65,7 +65,7 @@ status: status_init $(SUB_MAKEFILES)
 push:
 	@echo ""
 	@echo "### pushing of $(NAME_GIT_THIS) ###"
-	git push "$(URL_GIT_THIS)"
+	git push --set-upstream "$(URL_GIT_THIS)" master
 
 update_init:
 	@echo ""

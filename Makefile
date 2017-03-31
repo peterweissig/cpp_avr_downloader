@@ -3,7 +3,7 @@
 # Makefile                                                                    #
 # ========                                                                    #
 #                                                                             #
-# Version: 1.2.0                                                              #
+# Version: 1.2.1                                                              #
 # Date   : 31.03.17                                                           #
 # Author : Peter Weissig                                                      #
 #                                                                             #
@@ -64,17 +64,17 @@ status: status_init $(SUB_MAKEFILES)
 
 pull:
 	@echo ""
-	@echo "### pulling of $(NAME_GIT_THIS) ###"
+	@echo "### pulling $(NAME_GIT_THIS) ###"
 	git pull
 
 push:
 	@echo ""
-	@echo "### pushing of $(NAME_GIT_THIS) ###"
+	@echo "### pushing $(NAME_GIT_THIS) ###"
 	git push
 
 update_init:
 	@echo ""
-	@echo "### update $(NAME_GIT_THIS) ###"
+	@echo "### updating ###"
 	$(eval MAKEFILE_COMMAND=update)
 
 status_init:

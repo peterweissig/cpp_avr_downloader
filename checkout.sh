@@ -14,7 +14,7 @@
 #                                                                             #
 # New BSD License                                                             #
 #                                                                             #
-# Copyright (c) 2015-2016, Peter Weissig                                      #
+# Copyright (c) 2015-2017, Peter Weissig                                      #
 # All rights reserved.                                                        #
 #                                                                             #
 # Redistribution and use in source and binary forms, with or without          #
@@ -71,21 +71,19 @@ if [ "$#" -eq 0 ]; then
         echo "This folder already is a git-repository!"
         return
     fi
-    git init
-    git pull "${URL_GIT_MAIN}"
+    git clone "${URL_GIT_MAIN}" "${NAME_GIT_THIS}"
     if [ $? -ne 0 ]; then return; fi
 
     echo ""
     echo "### checking out main source code"
-    mkdir -p "${PATH_SOURCE}${NAME_GIT_THIS}/"
-    cd "${PATH_SOURCE}${NAME_GIT_THIS}/"
+    mkdir -p "${NAME_GIT_THIS}/${PATH_SOURCE}"
+    cd "${NAME_GIT_THIS}/${PATH_SOURCE}"
 
     if [ -d ".git" ]; then
         echo "This folder already is a git-repository!"
         return
     fi
-    git init
-    git pull "${URL_GIT_THIS}"
+    git clone "${URL_GIT_THIS}" "${NAME_GIT_THIS}"
     if [ $? -ne 0 ]; then return; fi
 
     echo ""
@@ -118,13 +116,12 @@ elif [ "$1" = "${NAME_ARGUMENT_SCRIPT}" ]; then
         if [ ! -d "../${dependency}" ]; then
             echo ""
             echo "### checking out ${dependency}"
-            mkdir -p "../${dependency}"
-            cd "../${dependency}"
+            cd ".."
 
             URL="${URL_GIT_BASE}cpp_${dependency}.git"
-            git init
-            git pull "${URL}"
+            git clone "${URL}" "${dependency}"
 
+            cd "${dependency}"
             if [ -f "checkout.sh" ]; then
                 sh "${NAME_CHECKOUT_SCRIPT}" "${NAME_ARGUMENT_SCRIPT}"
             fi

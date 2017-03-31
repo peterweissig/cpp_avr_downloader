@@ -88,6 +88,7 @@ if [ "$#" -eq 0 ]; then
 
     echo ""
     echo "### checking out additional source code"
+    cd "${NAME_GIT_THIS}"
     if [ ! -f "${NAME_CHECKOUT_SCRIPT}" ]; then
         echo "Error - no checkout script"
         return

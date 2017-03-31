@@ -3,8 +3,8 @@
 # Makefile                                                                    #
 # ========                                                                    #
 #                                                                             #
-# Version: 1.1.2                                                              #
-# Date   : 01.09.16                                                           #
+# Version: 1.2.0                                                              #
+# Date   : 31.03.17                                                           #
 # Author : Peter Weissig                                                      #
 #                                                                             #
 # For help or bug report please visit:                                        #
@@ -26,7 +26,7 @@ NAME_GIT="main"
 SUB_MAKEFILES = $(wildcard $(PATH_SOURCE)*/Makefile)
 .PHONY : $(SUB_MAKEFILES)
 
-.PHONY : all clean eclipse update status push update_init status_init
+.PHONY : all clean eclipse update status pull push update_init status_init
 
 all:
 	mkdir -p $(PATH_BUILD)
@@ -58,19 +58,23 @@ eclipse:
 	@echo ""
 	@echo "### finished :-) ###"
 
-update: update_init $(SUB_MAKEFILES)
+update: update_init pull $(SUB_MAKEFILES)
 
 status: status_init $(SUB_MAKEFILES)
+
+pull:
+	@echo ""
+	@echo "### pulling of $(NAME_GIT_THIS) ###"
+	git pull
 
 push:
 	@echo ""
 	@echo "### pushing of $(NAME_GIT_THIS) ###"
-	git push --set-upstream "$(URL_GIT_THIS)" master
+	git push
 
 update_init:
 	@echo ""
 	@echo "### update $(NAME_GIT_THIS) ###"
-	git pull "$(URL_GIT_THIS)"
 	$(eval MAKEFILE_COMMAND=update)
 
 status_init:

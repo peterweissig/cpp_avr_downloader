@@ -1,2 +1,6 @@
-.svn
-build
+# executables
+/avr_downloader
+/xbee_config
+
+# folders
+/build/

@@ -3,15 +3,16 @@
 # CMakeLists.txt                                                              #
 # ==============                                                              #
 #                                                                             #
-# Version: 1.0.0                                                              #
-# Date   : 11.10.15                                                           #
+# Version: 1.1.0                                                              #
+# Date   : 18.02.22                                                           #
 # Author : Peter Weissig                                                      #
 #                                                                             #
 # For help or bug report please visit:                                        #
-#   https://github.com/peterweissig/cpp_main/                                 #
+#   https://github.com/peterweissig/cpp_avr_downloader/                       #
 ###############################################################################
 
 cmake_minimum_required(VERSION 2.8)
+project(avr_downloader)
 
 # check all subdirectories and add those with a "CMakeLists.txt" file
 file(GLOB file_list "*/CMakeLists.txt")

@@ -11,8 +11,8 @@
 *   https://github.com/peterweissig/cpp_avr_downloader                        *
 ******************************************************************************/
 
-#define AVR_DOWNLOADER_VERSION "2.0.4"
-#define AVR_DOWNLOADER_DATE "01.09.2016"
+#define AVR_DOWNLOADER_VERSION "2.0.5"
+#define AVR_DOWNLOADER_DATE "19.02.2022"
 
 // local headers
 #include "wepet_avr_downloader.h"
@@ -86,6 +86,7 @@ cAvrDownloader::cAvrDownloader(int argc, char **argv) {
     if (! ParseOptions(argc, argv)) { return; }
     if (! CheckOptions()          ) { return; }
 
+    if (! CheckAvrdudeConf()      ) { return; }
     if (! LoadDevice()            ) { return; }
     if (! LoadFiles()             ) { return; }
 
@@ -394,6 +395,33 @@ bool cAvrDownloader::CheckOptions() {
     return true;
 }
 
+
+//**************************[CheckAvrdudeConf]*********************************
+bool cAvrDownloader::CheckAvrdudeConf() {
+
+    cTextFile testfile;
+    // check local file first
+    filename_avrdude_ = path_ + "avrdude.conf";
+    if (!testfile.CheckIfFileExists(filename_avrdude_)) {
+        // check installed file second
+        filename_avrdude_ = "/etc/avrdude.conf";
+        if (!testfile.CheckIfFileExists(filename_avrdude_)) {
+            // check relative path last
+            filename_avrdude_ = path_ + "ressource/avrdude/" + "avrdude.conf";
+            if (!testfile.CheckIfFileExists(filename_avrdude_)) {
+                OutputError("Cannot find avrdude.conf");
+                return false;
+            }
+        }
+    }
+
+    if (verbosity_ >= vbVerbose) {
+        OutputAvrdudeConf();
+    }
+
+    return true;
+}
+
 //**************************[LoadDevice]***************************************
 bool cAvrDownloader::LoadDevice() {
 
@@ -401,8 +429,7 @@ bool cAvrDownloader::LoadDevice() {
         return true;
     }
 
-    cAvrdudeFile file(path_ + "avrdude.conf");
-
+    cAvrdudeFile file(filename_avrdude_);
     if (file.HasError()) {
         OutputError(file.ReturnLastError());
         return false;
@@ -1392,7 +1419,16 @@ void cAvrDownloader::OutputOptions(void) {
     std::cout                                                   << std::endl;
 }
 
-//**************************[OutputOptions]************************************
+//**************************[OutputAvrdudeConf]********************************
+void cAvrDownloader::OutputAvrdudeConf(void) {
+    std::cout << "Avrdude config file:"                         << std::endl;
+
+    std::cout << "  Path           : " << filename_avrdude_     << std::endl;
+
+    std::cout                                                   << std::endl;
+}
+
+//**************************[OutputDevice]*************************************
 void cAvrDownloader::OutputDevice(void) {
     std::cout << "Device:"                                      << std::endl;
 

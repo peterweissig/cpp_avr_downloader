@@ -3,8 +3,8 @@
 * wepet_avr_downloader.h                                                      *
 * ======================                                                      *
 *                                                                             *
-* Version: 2.0.4                                                              *
-* Date   : 01.09.16                                                           *
+* Version: 2.0.5                                                              *
+* Date   : 19.02.22                                                           *
 * Author : Peter Weissig                                                      *
 *                                                                             *
 * For help or bug report please visit:                                        *
@@ -79,6 +79,7 @@ class cAvrDownloader {
   private:
     bool ParseOptions(int argc, char **argv);
     bool CheckOptions(void);
+    bool CheckAvrdudeConf(void);
     bool LoadDevice(void);
     bool LoadFiles(void);
     bool OpenComport(void);
@@ -111,6 +112,7 @@ class cAvrDownloader {
     void OutputHeader(void);
     void OutputHelp(void);
     void OutputOptions(void);
+    void OutputAvrdudeConf(void);
     void OutputDevice(void);
     void OutputResetSequence(void);
 
@@ -137,6 +139,7 @@ class cAvrDownloader {
 
     std::string filename_in_ , filename_compare_;
     std::string filename_out_, filename_changed_;
+    std::string filename_avrdude_;
     cFlash flash_;
     int bootstart_;
 

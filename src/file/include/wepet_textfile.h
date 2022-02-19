@@ -3,8 +3,8 @@
 * wepet_textfile.h                                                            *
 * ================                                                            *
 *                                                                             *
-* Version: 1.0.7                                                              *
-* Date   : 30.01.19                                                           *
+* Version: 1.0.8                                                              *
+* Date   : 19.02.22                                                           *
 * Author : Peter Weissig                                                      *
 *                                                                             *
 * For help or bug report please visit:                                        *
@@ -49,6 +49,7 @@ class cTextFile {
 
     bool SaveToFile(const std::string filename);
     bool LoadFromFile(const std::string filename);
+    bool CheckIfFileExists(const std::string filename) const;
 
     std::string ReturnLastError(void);
     bool HasError(void) const;

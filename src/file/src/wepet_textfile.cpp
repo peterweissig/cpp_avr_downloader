@@ -3,8 +3,8 @@
 * wepet_textfile.cpp                                                          *
 * ==================                                                          *
 *                                                                             *
-* Version: 1.0.7                                                              *
-* Date   : 30.01.19                                                           *
+* Version: 1.0.8                                                              *
+* Date   : 19.02.22                                                           *
 * Author : Peter Weissig                                                      *
 *                                                                             *
 * For help or bug report please visit:                                        *
@@ -145,7 +145,6 @@ bool cTextFile::SaveToFile(const std::string filename) {
     return SaveString(filename, SaveToString());
 }
 
-
 //**************************[LoadFromFile]*************************************
 bool cTextFile::LoadFromFile(const std::string filename) {
 
@@ -155,6 +154,13 @@ bool cTextFile::LoadFromFile(const std::string filename) {
     if (! LoadString(filename, temp_data)) { return false; }
 
     return LoadFromString(temp_data);
+}
+
+//**************************[CheckIfFileExists]********************************
+bool cTextFile::CheckIfFileExists(const std::string filename) const {
+
+    std::ifstream fin(filename.data());
+    return fin.good();
 }
 
 //**************************[ReturnLastError]**********************************

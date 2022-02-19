@@ -8,7 +8,7 @@
 * Author : Peter Weissig                                                      *
 *                                                                             *
 * For help or bug report please visit:                                        *
-*   https://github.com/peterweissig/                                          *
+*   https://github.com/peterweissig/cpp_avr_downloader                        *
 ******************************************************************************/
 
 #define AVR_DOWNLOADER_VERSION "2.0.4"

@@ -8,7 +8,7 @@
 # Author : Peter Weissig                                                      #
 #                                                                             #
 # For help or bug report please visit:                                        #
-#   https://github.com/peterweissig/cpp_avr_downloader/                       #
+#   https://github.com/peterweissig/cpp_avr_downloader                        #
 ###############################################################################
 
 NAME_GIT_THIS=main

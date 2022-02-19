@@ -3,8 +3,8 @@
 # Makefile                                                                    #
 # ========                                                                    #
 #                                                                             #
-# Version: 1.3.1                                                              #
-# Date   : 18.02.22                                                           #
+# Version: 1.3.2                                                              #
+# Date   : 19.02.22                                                           #
 # Author : Peter Weissig                                                      #
 #                                                                             #
 # For help or bug report please visit:                                        #
@@ -33,8 +33,8 @@ build:
 
 	@echo ""
 	@echo "### copy executables ###"
-	cp "$(PATH_BUILD)avr_downloader/avr_downloader" "./"
-	cp "$(PATH_BUILD)xbee_config/xbee_config" "./"
+	ln --symbolic --force "$(PATH_BUILD)avr_downloader/avr_downloader"
+	ln --symbolic --force "$(PATH_BUILD)xbee_config/xbee_config"
 
 	@echo ""
 	@echo "### finished :-) ###"
@@ -42,4 +42,4 @@ build:
 clean:
 	@echo ""
 	@echo "### cleaning build ###"
-	rm -rf $(PATH_BUILD)
+	rm -rf $(PATH_BUILD) avr_downloader xbee_config
